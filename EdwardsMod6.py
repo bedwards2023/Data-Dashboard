@@ -12,7 +12,6 @@ All work below was performed by Brittany Edwards
 """
 
 from dash import Dash, html, dcc, callback, Output, Input
-import plotly.express as px
 import pandas as pd
 import xlrd
 import matplotlib.pyplot as plt
@@ -28,8 +27,6 @@ df = pd.read_csv(file)
 
 # Count the number of occurrences for each crime. Fig 1
 counts = df['Crm Cd Desc'].value_counts()
-
-# Data structure for figure 1
 figure1ds = go.Figure(data=go.Bar(x=counts.index.tolist(),
                                   y=counts.values.tolist()))
 figure1ds.update_layout(title='Bar chart of the types of crimes',
@@ -50,14 +47,17 @@ figure2ds.update_layout(title='Violin Plot of Victim Ages',
 
 # Histogram for the number of crimes across the times. Fig 3
 time_counts = df['TIME OCC'].value_counts().sort_index()
-histogram_trace = go.Bar(x=time_counts.index, y=time_counts.values)
+histogram_trace = go.Bar(x=time_counts.index, y=time_counts.values, marker=dict(color='blue'))
 histogram_layout = go.Layout(title='Distribution of Time',
                              xaxis=dict(title='Time'),
                              yaxis=dict(title='Frequency'))
 histogram_fig = go.Figure(data=[histogram_trace], layout=histogram_layout)
 
+
 # Box plot for age and gender. Fig 4
+#I had to replace some weird values in this column. Everything that was H,blank or - was replaced with X for unknown.
 editeddf = df.replace({'Vict Sex': {'H': 'X', ' ': 'X', '-': 'X'}})
+#I also removed the outliers
 dropVals = np.where(editeddf['Vict Age'] > 80)
 editeddf.drop(dropVals[0], inplace=True)
 fig4ds = go.Figure(data=go.Box(x=editeddf['Vict Sex'], y=editeddf['Vict Age']))
