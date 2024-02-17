@@ -25,7 +25,7 @@ import matplotlib.ticker as ticker
 #Load file
 file = r"crimes.csv"
 df = pd.read_csv(file)
-print(df.describe())
+#print(df.describe())
 
 
 #Im counting the number of occurences for each crime. Fig 1
@@ -40,12 +40,12 @@ figure1ds = {
     'yaxis_title': 'Number of types of crimes'
 }
 
-print(figure1ds)
+#print(figure1ds)
 
 typesofcrimesfig1 = px.bar(x=figure1ds['x'], y=figure1ds['y'], title=figure1ds['title'])
 typesofcrimesfig1.update_layout(xaxis_title=figure1ds['xaxis_title'], yaxis_title=figure1ds['yaxis_title'])
 
-typesofcrimesfig1.show()
+#typesofcrimesfig1.show()
 
 #I have a violin graph for the ages of the victims, Fig 2
 #Data Structure for figure 2, violin graph
@@ -59,13 +59,12 @@ figure2ds = go.Figure(data=go.Violin(y=df['Vict Age'],
                                y0='Age'))
 figure2ds.update_layout(yaxis_zeroline=False)
 
-figure2ds.show()
+#figure2ds.show()
 
 #I have a histogram for the number of crimes across the times. Fig 3
 timecounts = df['TIME OCC'].value_counts().sort_index()
 
-print(timecounts)
-print(timecounts)
+#print(timecounts)
 plt.figure(figsize=(20, 6))
 plt.hist(df['TIME OCC'],color='skyblue', edgecolor='black')
 plt.title('Distribution of Time')
@@ -80,7 +79,7 @@ fig3ds = {
     'xlabel': 'Time',
     'ylabel': 'Frequency'
 }
-plt.show()
+#plt.show()
 
 
 #box plot for age and gender. Fig 4. There were some funky values in this data set so I had to replace some stuff.
@@ -92,7 +91,7 @@ editeddf = editeddf.replace('-','X')
 dropVals = np.where(editeddf['Vict Age'] > 80)
 editeddf.drop(dropVals[0], inplace = True)
 editeddf.boxplot(column='Vict Age', by='Vict Sex')
-plt.show()
+#plt.show()
 
 #Data Structure for figure 4 Box Plt
 fig4ds = {
@@ -112,7 +111,7 @@ value_counts.plot(kind='barh')
 plt.xlabel('Number of Crimes')
 plt.ylabel('Areas of LA')
 plt.title('Count of crimes per Area of LA')
-plt.show()
+#plt.show()
 
 #Data Structure for figure 5 bar graph
 figure5ds = {
@@ -133,7 +132,7 @@ plt.ylabel('Weapon Description')
 plt.title('Weapon Description Counts')
 plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(3))
 plt.tight_layout()
-plt.show()
+#plt.show()
 
 #Figure 6 Data Structure
 figure6ds = {
@@ -143,3 +142,44 @@ figure6ds = {
     'xaxis_title': 'Count',
     'yaxis_title': 'Weapon Description'
 }
+
+
+app = Dash(__name__)
+app.layout = html.Div([
+    html.H1(children="LA Crime Dashboard", className="hello", style={
+        'color': '#00361c', 'text-align': 'center'}),
+
+    html.Div([
+        html.Div(
+            children=[
+                html.H2(children='Violin Plot of Fares', style={'textAlign': 'center'}),
+                dcc.Graph(id='Graph', figure=typesofcrimesfig1)],
+            className="box1",
+            style={
+                'height': '100px',
+                'margin-left': '10px',
+                'width': '45%',
+                'text-align': 'center',
+                'display': 'inline-block'
+            }),
+        html.Div(children=[
+            html.H2(children='Box Plot of Ages', style={'textAlign': 'center'}),
+            dcc.Graph(id='BoxPlotGraph', figure=figure2ds)],
+            className="box2",
+            style={
+                'height': '100px',
+                'margin-left': '10px',
+                'text-align': 'center',
+                'width': '40%',
+                'display': 'inline-block'
+            })
+
+
+
+
+
+
+        ])
+    ])
+if __name__ == '__main__':
+    app.run(debug=True)
