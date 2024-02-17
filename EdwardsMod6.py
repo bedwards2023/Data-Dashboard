@@ -28,10 +28,13 @@ df = pd.read_csv(file)
 # Count the number of occurrences for each crime. Fig 1
 counts = df['Crm Cd Desc'].value_counts()
 figure1ds = go.Figure(data=go.Bar(x=counts.index.tolist(),
-                                  y=counts.values.tolist()))
+                                  y=counts.values.tolist(),
+                                  marker=dict(color='#8634fb')
+                                  ))
 figure1ds.update_layout(title='Bar chart of the types of crimes',
                         xaxis_title='Types of crimes',
                         yaxis_title='Number of types of crimes',
+                        plot_bgcolor='#2f2f2f',
                         paper_bgcolor='#2f2f2f',
                         font=dict(
                             color="white"  # Set the font color here
@@ -42,13 +45,14 @@ figure2ds = go.Figure(data=go.Violin(y=df['Vict Age'],
                                      box_visible=True,
                                      line_color='black',
                                      meanline_visible=True,
-                                     fillcolor='lightseagreen',
+                                     fillcolor='#8634fb',
                                      opacity=0.6,
                                      x0='Vict Age',
                                      y0='Age'))
 figure2ds.update_layout(title='Violin Plot of Victim Ages',
                         yaxis_zeroline=False,
                         paper_bgcolor='#2f2f2f',
+                        plot_bgcolor='#2f2f2f',
                         font=dict(
                             color="white"  # Set the font color here
                         )
@@ -56,11 +60,12 @@ figure2ds.update_layout(title='Violin Plot of Victim Ages',
 
 # Histogram for the number of crimes across the times. Fig 3
 time_counts = df['TIME OCC'].value_counts().sort_index()
-histogram_trace = go.Bar(x=time_counts.index, y=time_counts.values, marker=dict(color='blue'))
+histogram_trace = go.Bar(x=time_counts.index, y=time_counts.values, marker=dict(color='#8634fb'))
 histogram_layout = go.Layout(title='Distribution of Time',
                              xaxis=dict(title='Time'),
                              yaxis=dict(title='Frequency'),
                             paper_bgcolor='#2f2f2f',
+                            plot_bgcolor='#2f2f2f',
                             font=dict(
                                 color="white"  # Set the font color here
                             )
@@ -74,11 +79,12 @@ editeddf = df.replace({'Vict Sex': {'H': 'X', ' ': 'X', '-': 'X'}})
 #I also removed the outliers
 dropVals = np.where(editeddf['Vict Age'] > 80)
 editeddf.drop(dropVals[0], inplace=True)
-fig4ds = go.Figure(data=go.Box(x=editeddf['Vict Sex'], y=editeddf['Vict Age']))
+fig4ds = go.Figure(data=go.Box(x=editeddf['Vict Sex'], y=editeddf['Vict Age'],marker=dict(color='#8634fb')))
 fig4ds.update_layout(title='Boxplot of the Victim Age by Victim Sex',
                      xaxis_title='Victim Sex',
                      yaxis_title='Victim Age',
                     paper_bgcolor='#2f2f2f',
+                    plot_bgcolor='#2f2f2f',
                     font=dict(
                             color="white"  # Set the font color here
                         )
@@ -88,11 +94,12 @@ fig4ds.update_layout(title='Boxplot of the Victim Age by Victim Sex',
 value_counts = df['AREA NAME'].value_counts()
 figure5ds = go.Figure(data=go.Bar(x=value_counts.values,
                                   y=value_counts.index,
-                                  orientation='h'))
+                                  orientation='h',marker=dict(color='#8634fb')))
 figure5ds.update_layout(title='Count of Crimes per Area of LA',
                         xaxis_title='Number of Crimes',
                         yaxis_title='Areas of LA',
                         paper_bgcolor='#2f2f2f',
+                        plot_bgcolor='#2f2f2f',
                         font=dict(
                             color="white"  # Set the font color here
                         )
@@ -102,11 +109,12 @@ figure5ds.update_layout(title='Count of Crimes per Area of LA',
 wepcounts = df['Weapon Desc'].value_counts()
 figure6ds = go.Figure(data=go.Bar(x=wepcounts.values,
                                   y=wepcounts.index,
-                                  orientation='h'))
+                                  orientation='h',marker=dict(color='#8634fb')))
 figure6ds.update_layout(title='Weapon Description Counts',
                         xaxis_title='Count',
                         yaxis_title='Weapon Description',
                         paper_bgcolor='#2f2f2f',
+                        plot_bgcolor='#2f2f2f',
                         font=dict(
                             color="white"  # Set the font color here
                         )
@@ -117,86 +125,46 @@ figure6ds.update_layout(title='Weapon Description Counts',
 '''********************DASH PORTION*********************'''
 app = Dash(__name__)
 
-app.layout = html.Div([
-    html.H1(children="LA Crime Dashboard", className="hello",style={'textAlign':'center'}),
+app.layout = html.Div(style={'textAlign': 'center', 'margin-left': '100px', 'margin-right': '20px'}, children=[
+    html.H1(children="LA Crime Dashboard", className="hello", style={'textAlign':'center'}),
 
     html.Div([
-        # First Graph
         html.Div(
             children=[
-                html.H2(children='Violin Plot of Fares', style={'textAlign': 'center'}),
+                html.H2(children='Types of Crimes Occurring', style={'textAlign': 'center'}),
                 dcc.Graph(id='Graph', figure=figure1ds)],
             className="box1",
-            style={
-                'width': '45%',
-                'text-align': 'center',
-                'display': 'inline-block',
-                'backgroundColor': '#2f2f2f'
-            }),
+            ),
 
-        # Second Graph (Box Plot)
         html.Div(
             children=[
-                html.H2(children='Box Plot of Ages', style={'textAlign': 'center'}),
+                html.H2(children='Violin Graph of Ages', style={'textAlign': 'center'}),
                 dcc.Graph(id='BoxPlotGraph', figure=figure2ds)],
-            className="box2",
-            style={
-                'width': '45%',
-                'text-align': 'center',
-                'display': 'inline-block',
-                'backgroundColor': '#2f2f2f'
-            }),
+            className="box1",),
     ]),
 
-    # Third Graph (Histogram)
     html.Div(
         children=[
-            html.H2(children='Distribution of Time', style={'textAlign': 'center'}),
+            html.H2(children='Histogram of what time crimes are occurring', style={'textAlign': 'center'}),
             dcc.Graph(id='HistGraph', figure=histogram_fig)],
-        className="box3",
-        style={
-            'width': '45%',
-            'text-align': 'center',
-            'display': 'inline-block',
-            'backgroundColor': '#2f2f2f'
-        }),
+        className="box3",),
 
-    # Fourth Graph (Bar Chart of Crime Areas)
     html.Div(
         children=[
             html.H2(children='Count of Crimes per Area of LA', style={'textAlign': 'center'}),
             dcc.Graph(id='AreaCrimeGraph', figure=figure5ds)],
         className="box4",
-        style={
-            'width': '45%',
-            'text-align': 'center',
-            'display': 'inline-block',
-            'backgroundColor': '#2f2f2f'
-        }),
-
-    # Fifth Graph (Bar Chart of Weapon Description Counts)
+),
     html.Div(
         children=[
             html.H2(children='Weapon Description Counts', style={'textAlign': 'center'}),
             dcc.Graph(id='WeaponGraph', figure=figure6ds)],
-        className="box5",
-        style={
-            'width': '45%',
-            'text-align': 'center',
-            'display': 'inline-block',
-            'backgroundColor': '#2f2f2f'
-        }),
+        className="box5",),
     html.Div(
         children=[
-            html.H2(children='Weapon Description Counts', style={'textAlign': 'center'}),
+            html.H2(children='Age of victims per sex', style={'textAlign': 'center'}),
             dcc.Graph(id='age graph', figure=fig4ds)],
-        className="box5",
-        style={
-            'width': '45%',
-            'text-align': 'center',
-            'display': 'inline-block',
-            'backgroundColor': '#2f2f2f'
-        })
+        className="box5",)
 ])
 
 if __name__ == '__main__':

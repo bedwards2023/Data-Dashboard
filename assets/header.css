@@ -8,3 +8,23 @@ font-size:27px;
 padding-left: 5px;
 font-color:blue;
 }
+.box-container {
+    text-align: center;
+    margin-left: 1000px;
+    width: 90%;
+}
+
+.box1, .box2, .box3, .box4, .box5 {
+    width: 45%;
+    display: inline-block;
+    text-align: center;
+    background-color: #2f2f2f;
+    margin: 10px;
+}
+
+h2{
+    padding-top:10px;
+    background-color: #292929;
+    text-align: center;
+    color: white;
+}
