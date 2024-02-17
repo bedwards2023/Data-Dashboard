@@ -4,20 +4,18 @@ Name:Brittany Edwards
 Date:02/14/2024
 Assignment:Module 6: Assignment: Exploratory Data Analysis
 Due Date:02/18/24
-About this project:
+About this project: This is my Data Dashboard assignment. I used a data set called "Los Angelos Crimes" from kaggle which looks at crimes in different LA areas.
+I created 6 graphs based on the data and then created a Dash site to display the graphs.
 
 Assumptions:(write any assumptions made here N/A
 All work below was performed by Brittany Edwards
 
 """
 
-from dash import Dash, html, dcc, callback, Output, Input
+from dash import Dash, html, dcc
 import pandas as pd
-import xlrd
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import numpy as np
-import matplotlib.ticker as ticker
 
 #I used a data set called "Los_Angeles_Crimes" from Kaggle https://www.kaggle.com/datasets/shayalvaghasiya/los-angeles-crimes
 
@@ -37,7 +35,7 @@ figure1ds.update_layout(title='Bar chart of the types of crimes',
                         plot_bgcolor='#2f2f2f',
                         paper_bgcolor='#2f2f2f',
                         font=dict(
-                            color="white"  # Set the font color here
+                            color="white"
                         )
                     )
 # Violin graph for the ages of the victims, Fig 2
@@ -54,7 +52,7 @@ figure2ds.update_layout(title='Violin Plot of Victim Ages',
                         paper_bgcolor='#2f2f2f',
                         plot_bgcolor='#2f2f2f',
                         font=dict(
-                            color="white"  # Set the font color here
+                            color="white"
                         )
                         )
 
@@ -67,7 +65,7 @@ histogram_layout = go.Layout(title='Distribution of Time',
                             paper_bgcolor='#2f2f2f',
                             plot_bgcolor='#2f2f2f',
                             font=dict(
-                                color="white"  # Set the font color here
+                                color="white"
                             )
                              )
 histogram_fig = go.Figure(data=[histogram_trace], layout=histogram_layout)
@@ -86,7 +84,7 @@ fig4ds.update_layout(title='Boxplot of the Victim Age by Victim Sex',
                     paper_bgcolor='#2f2f2f',
                     plot_bgcolor='#2f2f2f',
                     font=dict(
-                            color="white"  # Set the font color here
+                            color="white"
                         )
                      )
 
@@ -101,7 +99,7 @@ figure5ds.update_layout(title='Count of Crimes per Area of LA',
                         paper_bgcolor='#2f2f2f',
                         plot_bgcolor='#2f2f2f',
                         font=dict(
-                            color="white"  # Set the font color here
+                            color="white"
                         )
                         )
 
@@ -116,7 +114,7 @@ figure6ds.update_layout(title='Weapon Description Counts',
                         paper_bgcolor='#2f2f2f',
                         plot_bgcolor='#2f2f2f',
                         font=dict(
-                            color="white"  # Set the font color here
+                            color="white"
                         )
                         )
 
