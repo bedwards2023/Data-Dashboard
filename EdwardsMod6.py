@@ -22,164 +22,148 @@ import matplotlib.ticker as ticker
 
 #I used a data set called "Los_Angeles_Crimes" from Kaggle https://www.kaggle.com/datasets/shayalvaghasiya/los-angeles-crimes
 
-#Load file
+# Load file
 file = r"crimes.csv"
 df = pd.read_csv(file)
-#print(df.describe())
 
-
-#Im counting the number of occurences for each crime. Fig 1
+# Count the number of occurrences for each crime. Fig 1
 counts = df['Crm Cd Desc'].value_counts()
 
-#data structure for figure1
-figure1ds = {
-    'x': counts.index.tolist(),
-    'y': counts.values.tolist(),
-    'title': 'Bar chart of the types of crimes',
-    'xaxis_title': 'Types of crimes',
-    'yaxis_title': 'Number of types of crimes'
-}
+# Data structure for figure 1
+figure1ds = go.Figure(data=go.Bar(x=counts.index.tolist(),
+                                  y=counts.values.tolist()))
+figure1ds.update_layout(title='Bar chart of the types of crimes',
+                        xaxis_title='Types of crimes',
+                        yaxis_title='Number of types of crimes')
 
-#print(figure1ds)
-
-typesofcrimesfig1 = px.bar(x=figure1ds['x'], y=figure1ds['y'], title=figure1ds['title'])
-typesofcrimesfig1.update_layout(xaxis_title=figure1ds['xaxis_title'], yaxis_title=figure1ds['yaxis_title'])
-
-#typesofcrimesfig1.show()
-
-#I have a violin graph for the ages of the victims, Fig 2
-#Data Structure for figure 2, violin graph
+# Violin graph for the ages of the victims, Fig 2
 figure2ds = go.Figure(data=go.Violin(y=df['Vict Age'],
-                               box_visible=True,
-                               line_color='black',
-                               meanline_visible=True,
-                               fillcolor='lightseagreen',
-                               opacity=0.6,
-                               x0='Vict Age',
-                               y0='Age'))
-figure2ds.update_layout(yaxis_zeroline=False)
+                                     box_visible=True,
+                                     line_color='black',
+                                     meanline_visible=True,
+                                     fillcolor='lightseagreen',
+                                     opacity=0.6,
+                                     x0='Vict Age',
+                                     y0='Age'))
+figure2ds.update_layout(title='Violin Plot of Victim Ages',
+                        yaxis_zeroline=False)
 
-#figure2ds.show()
+# Histogram for the number of crimes across the times. Fig 3
+time_counts = df['TIME OCC'].value_counts().sort_index()
+histogram_trace = go.Bar(x=time_counts.index, y=time_counts.values)
+histogram_layout = go.Layout(title='Distribution of Time',
+                             xaxis=dict(title='Time'),
+                             yaxis=dict(title='Frequency'))
+histogram_fig = go.Figure(data=[histogram_trace], layout=histogram_layout)
 
-#I have a histogram for the number of crimes across the times. Fig 3
-timecounts = df['TIME OCC'].value_counts().sort_index()
-
-#print(timecounts)
-plt.figure(figsize=(20, 6))
-plt.hist(df['TIME OCC'],color='skyblue', edgecolor='black')
-plt.title('Distribution of Time')
-plt.xlabel('Time')
-plt.ylabel('Frequency')
-
-#DataStructure for fig 3, histogram
-fig3ds = {
-    'x': timecounts.index.tolist(),
-    'y': timecounts.values.tolist(),
-    'title': 'Distribution of Time',
-    'xlabel': 'Time',
-    'ylabel': 'Frequency'
-}
-#plt.show()
-
-
-#box plot for age and gender. Fig 4. There were some funky values in this data set so I had to replace some stuff.
-#If H, - , or ' ' was the victim's sex I replaced it with an X, which is suppose to be unknown.
-editeddf = df.replace('H','X')
-editeddf = editeddf.replace(' ','X')
-editeddf = editeddf.replace('-','X')
-#I also dropped some outliers to make the graph a little more readable
+# Box plot for age and gender. Fig 4
+editeddf = df.replace({'Vict Sex': {'H': 'X', ' ': 'X', '-': 'X'}})
 dropVals = np.where(editeddf['Vict Age'] > 80)
-editeddf.drop(dropVals[0], inplace = True)
-editeddf.boxplot(column='Vict Age', by='Vict Sex')
-#plt.show()
+editeddf.drop(dropVals[0], inplace=True)
+fig4ds = go.Figure(data=go.Box(x=editeddf['Vict Sex'], y=editeddf['Vict Age']))
+fig4ds.update_layout(title='Boxplot of the Victim Age by Victim Sex',
+                     xaxis_title='Victim Sex',
+                     yaxis_title='Victim Age')
 
-#Data Structure for figure 4 Box Plt
-fig4ds = {
-    'data': editeddf,
-    'column': 'Vict Age',
-    'by' : 'Vict Sex',
-    'title' : 'Boxplot of the Victim Age by Victim Sex',
-    'xlabel' : 'Victim Sex',
-    'ylabel' : 'Victim Age'
-}
-
-
-#Now area and count of crimes per area. Fig 5
-
+# Area and count of crimes per area. Fig 5
 value_counts = df['AREA NAME'].value_counts()
-value_counts.plot(kind='barh')
-plt.xlabel('Number of Crimes')
-plt.ylabel('Areas of LA')
-plt.title('Count of crimes per Area of LA')
-#plt.show()
+figure5ds = go.Figure(data=go.Bar(x=value_counts.values,
+                                  y=value_counts.index,
+                                  orientation='h'))
+figure5ds.update_layout(title='Count of Crimes per Area of LA',
+                        xaxis_title='Number of Crimes',
+                        yaxis_title='Areas of LA')
 
-#Data Structure for figure 5 bar graph
-figure5ds = {
-    'x': value_counts.index.tolist(),
-    'y': value_counts.values.tolist(),
-    'title': 'Count of crimes per Area of LA',
-    'xaxis_title': 'Number of Crimes',
-    'yaxis_title': 'Areas of LA'
-}
-
-
-#And another bar graph for Weapon Description and the number of times it occurred. Fig6
+# Bar graph for Weapon Description and the number of times it occurred. Fig 6
 wepcounts = df['Weapon Desc'].value_counts()
-fig = plt.figure(figsize=(10, 5))
-plt.barh(wepcounts.index, wepcounts, color='maroon')
-plt.xlabel('Count')
-plt.ylabel('Weapon Description')
-plt.title('Weapon Description Counts')
-plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(3))
-plt.tight_layout()
-#plt.show()
-
-#Figure 6 Data Structure
-figure6ds = {
-    'x': wepcounts.index.tolist(),
-    'y': wepcounts.values.tolist(),
-    'title': 'Weapon Description Counts',
-    'xaxis_title': 'Count',
-    'yaxis_title': 'Weapon Description'
-}
+figure6ds = go.Figure(data=go.Bar(x=wepcounts.values,
+                                  y=wepcounts.index,
+                                  orientation='h'))
+figure6ds.update_layout(title='Weapon Description Counts',
+                        xaxis_title='Count',
+                        yaxis_title='Weapon Description')
 
 
+
+'''********************DASH PORTION*********************'''
 app = Dash(__name__)
+
 app.layout = html.Div([
     html.H1(children="LA Crime Dashboard", className="hello", style={
         'color': '#00361c', 'text-align': 'center'}),
 
     html.Div([
+        # First Graph
         html.Div(
             children=[
                 html.H2(children='Violin Plot of Fares', style={'textAlign': 'center'}),
-                dcc.Graph(id='Graph', figure=typesofcrimesfig1)],
+                dcc.Graph(id='Graph', figure=figure1ds)],
             className="box1",
             style={
-                'height': '100px',
-                'margin-left': '10px',
                 'width': '45%',
                 'text-align': 'center',
                 'display': 'inline-block'
             }),
-        html.Div(children=[
-            html.H2(children='Box Plot of Ages', style={'textAlign': 'center'}),
-            dcc.Graph(id='BoxPlotGraph', figure=figure2ds)],
+
+        # Second Graph (Box Plot)
+        html.Div(
+            children=[
+                html.H2(children='Box Plot of Ages', style={'textAlign': 'center'}),
+                dcc.Graph(id='BoxPlotGraph', figure=figure2ds)],
             className="box2",
             style={
-                'height': '100px',
-                'margin-left': '10px',
+                'width': '45%',
                 'text-align': 'center',
-                'width': '40%',
                 'display': 'inline-block'
-            })
+            }),
+    ]),
 
+    # Third Graph (Histogram)
+    html.Div(
+        children=[
+            html.H2(children='Distribution of Time', style={'textAlign': 'center'}),
+            dcc.Graph(id='HistGraph', figure=histogram_fig)],
+        className="box3",
+        style={
+            'width': '45%',
+            'text-align': 'center',
+            'display': 'inline-block'
+        }),
 
+    # Fourth Graph (Bar Chart of Crime Areas)
+    html.Div(
+        children=[
+            html.H2(children='Count of Crimes per Area of LA', style={'textAlign': 'center'}),
+            dcc.Graph(id='AreaCrimeGraph', figure=figure5ds)],
+        className="box4",
+        style={
+            'width': '45%',
+            'text-align': 'center',
+            'display': 'inline-block'
+        }),
 
+    # Fifth Graph (Bar Chart of Weapon Description Counts)
+    html.Div(
+        children=[
+            html.H2(children='Weapon Description Counts', style={'textAlign': 'center'}),
+            dcc.Graph(id='WeaponGraph', figure=figure6ds)],
+        className="box5",
+        style={
+            'width': '45%',
+            'text-align': 'center',
+            'display': 'inline-block'
+        }),
+    html.Div(
+        children=[
+            html.H2(children='Weapon Description Counts', style={'textAlign': 'center'}),
+            dcc.Graph(id='age graph', figure=fig4ds)],
+        className="box5",
+        style={
+            'width': '45%',
+            'text-align': 'center',
+            'display': 'inline-block'
+        })
+])
 
-
-
-        ])
-    ])
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run_server(debug=True)
